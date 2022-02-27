@@ -1,58 +1,67 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs22.model.User;
+import ch.uzh.ifi.hase.soprafs22.model.UserDTO;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * User Controller
- * This class is responsible for handling all REST request that are related to
- * the user.
- * The controller will receive the request and delegate the execution to the
- * UserService and finally return the result.
- */
+@AllArgsConstructor
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
-  private final UserService userService;
+  private UserService userService;
 
-  UserController(UserService userService) {
-    this.userService = userService;
-  }
-
-  @GetMapping("/users")
-  @ResponseStatus(HttpStatus.OK)
+  @GetMapping
   @ResponseBody
-  public List<UserGetDTO> getAllUsers() {
-    // fetch all users in the internal representation
-    List<User> users = userService.getUsers();
-    List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-    // convert each user to the API representation
-    for (User user : users) {
-      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-    }
-    return userGetDTOs;
+  public List<User> getAllUsers() {
+    return userService.getAllUsers();
   }
 
-  @PostMapping("/users")
+  @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) {
-    // convert API user to internal representation
-    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+  public User createUser(@RequestBody UserDTO newUser) {
+    if (userService.isExistingUsername(newUser.getUsername()))
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username " + newUser.getUsername() + " is not available");
+    return userService.createUser(newUser);
+  }
 
-    // create user
-    User createdUser = userService.createUser(userInput);
+  @GetMapping("/{userId}")
+  @ResponseBody
+  public User getUserById(@PathVariable Long userId) {
+    return userService.getUserById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with ID: " + userId));
+  }
 
-    // convert internal representation of user back to API
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
+  @PutMapping("/{userId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateUserData(@PathVariable Long userId, @RequestBody UserDTO updatedUser) {
+    User currentUser = getUserById(userId);
+    userService.updateUserData(currentUser, updatedUser);
+  }
+
+  @RequestMapping("/login")
+  @ResponseBody
+  public User login(@RequestBody UserDTO user) {
+    return userService.getUserByCredentialsAndLogIn(user)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+  }
+
+  @RequestMapping("/register")
+  @ResponseBody
+  public User register(@RequestBody UserDTO newUser) {
+    return createUser(newUser);
+  }
+
+  @GetMapping("/validate/{username}")
+  @ResponseBody
+  public boolean isAvailableUsername(@PathVariable String username) {
+    return !userService.isExistingUsername(username);
   }
 }
