@@ -20,7 +20,8 @@ jobs:
     - name: install Java
       uses: actions/setup-java@v2
       with:
-        java-version: '17'
+        java-version: 17
+        distribution: zulu
 
     - name: create .netrc file for heroku authentication
       run: |+
