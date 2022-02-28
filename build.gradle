@@ -1,7 +1,7 @@
 plugins {
   id 'org.springframework.boot' version '2.6.3'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'java'
+  id 'application'
   id 'idea'
   id 'jacoco'
   id 'io.freefair.lombok' version '6.4.1'
@@ -31,7 +31,9 @@ test {
 jacocoTestReport {
   dependsOn test
   reports {
-    xml.enabled true
-    csv.enabled false
+    xml.required = true
+    csv.required = false
   }
 }
+
+jar.manifest.attributes('Main-Class': 'ch.uzh.ifi.hase.soprafs22.Application')
