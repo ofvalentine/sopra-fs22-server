@@ -9,8 +9,6 @@ spring:
     password: sopra
   jpa:
     defer-datasource-initialization: true
-  cache:
-    type: none
 logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

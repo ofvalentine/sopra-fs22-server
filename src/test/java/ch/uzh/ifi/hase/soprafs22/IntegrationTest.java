@@ -17,12 +17,12 @@ public class IntegrationTest {
   private UserController userController;
 
   @Test
-  public void register_validInput_thenRegister_existingUsername_throwException() throws Exception {
-    assertTrue(userController.isAvailableUsername("user"));
-
+  public void register_validInput_thenRegister_existingUsername_throwException() {
     UserDTO testUser1 = new UserDTO();
     testUser1.setUsername("user");
     testUser1.setPassword("test");
+
+    assertTrue(userController.isAvailableUsername(testUser1));
 
     UserDTO testUser2 = new UserDTO();
     testUser2.setUsername("user");

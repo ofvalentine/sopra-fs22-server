@@ -176,11 +176,11 @@ public class UserControllerTest {
 
     given(userService.getUserByCredentialsAndLogIn(userDTO)).willReturn(Optional.of(user));
 
-    MockHttpServletRequestBuilder putRequest = put("/users/login")
+    MockHttpServletRequestBuilder postRequest = post("/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userDTO));
 
-    mockMvc.perform(putRequest)
+    mockMvc.perform(postRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(user.getId().intValue())))
             .andExpect(jsonPath("$.username", is(user.getUsername())))
@@ -195,11 +195,11 @@ public class UserControllerTest {
 
     given(userService.getUserByCredentialsAndLogIn(userDTO)).willReturn(Optional.empty());
 
-    MockHttpServletRequestBuilder putRequest = put("/users/login")
+    MockHttpServletRequestBuilder postRequest = post("/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userDTO));
 
-    mockMvc.perform(putRequest).andExpect(status().isUnauthorized());
+    mockMvc.perform(postRequest).andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -245,18 +245,30 @@ public class UserControllerTest {
 
   @Test
   public void isAvailableUsername_true() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setUsername("user");
+    userDTO.setPassword("test");
+
     given(userService.isExistingUsername("user")).willReturn(false);
 
-    MockHttpServletRequestBuilder getRequest = get("/users/validate/user").contentType(MediaType.APPLICATION_JSON);
-    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(jsonPath("$", is(true)));
+    MockHttpServletRequestBuilder postRequest = post("/users/validate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userDTO));
+    mockMvc.perform(postRequest).andExpect(status().isOk()).andExpect(jsonPath("$", is(true)));
   }
 
   @Test
   public void isAvailableUsername_false() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setUsername("user");
+    userDTO.setPassword("test");
+
     given(userService.isExistingUsername("user")).willReturn(true);
 
-    MockHttpServletRequestBuilder getRequest = get("/users/validate/user").contentType(MediaType.APPLICATION_JSON);
-    mockMvc.perform(getRequest).andExpect(status().isOk()).andExpect(jsonPath("$", is(false)));
+    MockHttpServletRequestBuilder postRequest = post("/users/validate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userDTO));
+    mockMvc.perform(postRequest).andExpect(status().isOk()).andExpect(jsonPath("$", is(false)));
   }
 
   /**

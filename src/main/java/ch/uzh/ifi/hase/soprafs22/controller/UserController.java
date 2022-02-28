@@ -46,22 +46,22 @@ public class UserController {
     userService.updateUserData(currentUser, updatedUser);
   }
 
-  @RequestMapping("/login")
+  @PostMapping("/login")
   @ResponseBody
   public User login(@RequestBody UserDTO user) {
     return userService.getUserByCredentialsAndLogIn(user)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
   }
 
-  @RequestMapping("/register")
+  @PostMapping("/register")
   @ResponseBody
   public User register(@RequestBody UserDTO newUser) {
     return createUser(newUser);
   }
 
-  @GetMapping("/validate/{username}")
+  @PostMapping("/validate")
   @ResponseBody
-  public boolean isAvailableUsername(@PathVariable String username) {
-    return !userService.isExistingUsername(username);
+  public boolean isAvailableUsername(@RequestBody UserDTO newUser) {
+    return !userService.isExistingUsername(newUser.getUsername());
   }
 }
