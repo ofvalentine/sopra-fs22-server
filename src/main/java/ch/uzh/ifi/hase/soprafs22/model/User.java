@@ -1,11 +1,12 @@
 package ch.uzh.ifi.hase.soprafs22.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -24,14 +25,14 @@ public class User {
   private String password;
 
   @CreationTimestamp
-  @Temporal(TemporalType.DATE)
   @Column(nullable = false)
-  private Date creationDate;
+  @JsonFormat(pattern="dd.MM.yyyy")
+  private ZonedDateTime creationDate;
 
   @Column(nullable = false)
   private boolean loggedIn = true;
 
-  @Temporal(TemporalType.DATE)
-  private Date birthday;
+  @JsonFormat(pattern="dd.MM.yyyy")
+  private ZonedDateTime birthday;
 
 }

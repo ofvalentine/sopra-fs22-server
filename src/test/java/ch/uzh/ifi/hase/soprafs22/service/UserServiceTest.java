@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Sort;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +90,7 @@ public class UserServiceTest {
 
     UserDTO updatedUserDTO = new UserDTO();
     updatedUserDTO.setUsername("user-2");
-    updatedUserDTO.setBirthday(new Date());
+    updatedUserDTO.setBirthday(ZonedDateTime.now());
     updatedUserDTO.setLoggedIn(false);
 
     User updatedUser = userService.updateUserData(createdUser, updatedUserDTO);

@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @NoArgsConstructor
 @Data
@@ -15,7 +15,7 @@ public class UserDTO {
 
   private String password;
 
-  private Date birthday;
+  private ZonedDateTime birthday;
 
   private boolean loggedIn = true;
 }

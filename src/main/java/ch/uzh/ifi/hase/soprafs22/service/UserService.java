@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.model.UserDTO;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,8 @@ public class UserService {
   }
 
   public User updateUserData(User currentUser, UserDTO updatedUser) {
-    currentUser.setUsername(updatedUser.getUsername());
+    if (!StringUtils.isEmpty(updatedUser.getUsername()))
+      currentUser.setUsername(updatedUser.getUsername());
     currentUser.setBirthday(updatedUser.getBirthday());
     currentUser.setLoggedIn(updatedUser.isLoggedIn());
     return userRepository.save(currentUser);

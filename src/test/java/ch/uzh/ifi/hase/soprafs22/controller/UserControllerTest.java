@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.model.UserDTO;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
+
+  ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
   @Autowired
   private MockMvc mockMvc;
@@ -98,6 +101,20 @@ public class UserControllerTest {
   }
 
   @Test
+  public void createUser_nullCredentials_throwException() throws Exception {
+    UserDTO userDTO = new UserDTO();
+    userDTO.setUsername("user");
+
+    given(userService.isExistingUsername("user")).willReturn(false);
+
+    MockHttpServletRequestBuilder postRequest = post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userDTO));
+
+    mockMvc.perform(postRequest).andExpect(status().isBadRequest());
+  }
+
+  @Test
   public void getById_userFound_returnUser() throws Exception {
     User user = new User();
     user.setId(1L);
@@ -134,7 +151,7 @@ public class UserControllerTest {
     UserDTO userDTO = new UserDTO();
     userDTO.setId(1L);
     userDTO.setUsername("user");
-    userDTO.setBirthday(new Date());
+    userDTO.setBirthday(ZonedDateTime.now());
     userDTO.setLoggedIn(true);
 
     given(userService.getUserById(1L)).willReturn(Optional.of(user));
@@ -151,7 +168,7 @@ public class UserControllerTest {
     UserDTO userDTO = new UserDTO();
     userDTO.setId(1L);
     userDTO.setUsername("user");
-    userDTO.setBirthday(new Date());
+    userDTO.setBirthday(ZonedDateTime.now());
     userDTO.setLoggedIn(true);
 
     given(userService.getUserById(1L)).willReturn(Optional.empty());
@@ -279,7 +296,7 @@ public class UserControllerTest {
    */
   private String asJsonString(UserDTO userDTO) {
     try {
-      return new ObjectMapper().writeValueAsString(userDTO);
+      return mapper.writeValueAsString(userDTO);
     } catch (JsonProcessingException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }

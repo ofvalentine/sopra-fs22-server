@@ -34,6 +34,14 @@ jacocoTestReport {
   }
 }
 
+/**
+ * Disable the Gradle task 'jar' to prevent generating a plain JAR, thus allowing only a fat
+ * JAR (with all dependencies) to be generated via the task 'bootJar' when deploying the app.
+ *
+ * Solves a common Heroku bug where Heroku builds the plain JAR instead of the fat JAR, which
+ * results in a successful build that crashes when starting the app. (Alternatively, you can
+ * provide Heroku the exact filename of the fat JAR via a Procfile.)
+ */
 jar {
   enabled = false
 }
