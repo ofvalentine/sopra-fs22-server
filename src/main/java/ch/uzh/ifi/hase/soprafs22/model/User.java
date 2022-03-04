@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -26,13 +26,13 @@ public class User {
 
   @CreationTimestamp
   @Column(nullable = false)
-  @JsonFormat(pattern="dd.MM.yyyy")
-  private ZonedDateTime creationDate;
+  @Temporal(TemporalType.DATE)
+  private Date creationDate;
 
   @Column(nullable = false)
   private boolean loggedIn = true;
 
-  @JsonFormat(pattern="dd.MM.yyyy")
-  private ZonedDateTime birthday;
+  @Temporal(TemporalType.DATE)
+  private Date birthday;
 
 }

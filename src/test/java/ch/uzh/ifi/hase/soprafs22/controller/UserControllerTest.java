@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -151,7 +151,7 @@ public class UserControllerTest {
     UserDTO userDTO = new UserDTO();
     userDTO.setId(1L);
     userDTO.setUsername("user");
-    userDTO.setBirthday(ZonedDateTime.now());
+    userDTO.setBirthday(new Date());
     userDTO.setLoggedIn(true);
 
     given(userService.getUserById(1L)).willReturn(Optional.of(user));
@@ -168,7 +168,7 @@ public class UserControllerTest {
     UserDTO userDTO = new UserDTO();
     userDTO.setId(1L);
     userDTO.setUsername("user");
-    userDTO.setBirthday(ZonedDateTime.now());
+    userDTO.setBirthday(new Date());
     userDTO.setLoggedIn(true);
 
     given(userService.getUserById(1L)).willReturn(Optional.empty());

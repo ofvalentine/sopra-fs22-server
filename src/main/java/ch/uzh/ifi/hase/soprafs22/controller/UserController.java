@@ -19,8 +19,7 @@ public class UserController {
   private UserService userService;
 
   /**
-   * Fetch all stored users. Note that the serialized User object does not contain a 'password' field
-   * and both ZonedDateTime fields (birthday, creationDate) are formatted to display the date only.
+   * Fetch all stored users. Note that the serialized User object does not contain a 'password' field.
    * @return  list of serialized User objects
    */
   @GetMapping
@@ -31,7 +30,7 @@ public class UserController {
   /**
    * Register a new user with their desired credentials (username, password) if the chosen username is available.
    * @param newUser   DTO object containing the desired credentials
-   * @return          serialized User object as stored in the database, if created successfully
+   * @return          response with status 204 and a serialized User object, if created successfully
    * @throws ResponseStatusException    with status 400, when the username or password are empty
    * @throws ResponseStatusException    with status 409, when the chosen username is not available
    */
